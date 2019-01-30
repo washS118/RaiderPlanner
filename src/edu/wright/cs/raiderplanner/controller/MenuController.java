@@ -576,8 +576,10 @@ public class MenuController implements Initializable {
 			} else {
 				UiManager.reportError("File does not exist.");
 			}
+			
+			MainController.loadFile(plannerFile);
 		}
-		MainController.loadFile(plannerFile);
+		
 		try {
 			MainController.ui.reloadMainMenu();
 		} catch (Exception e) {
