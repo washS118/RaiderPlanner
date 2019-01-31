@@ -560,8 +560,8 @@ public class MenuController implements Initializable {
 	public void openProfile() {
 		MainController.save();
 		File plannerFile = MainController.ui.loadPlannerFileDialog();
-		MainController.setPlannerFile(plannerFile);
 		if (plannerFile != null) {
+			MainController.setPlannerFile(plannerFile);
 			if (plannerFile.exists()) {
 				if (plannerFile.canRead()) {
 					if (plannerFile.canWrite()) {
@@ -576,7 +576,6 @@ public class MenuController implements Initializable {
 			} else {
 				UiManager.reportError("File does not exist.");
 			}
-			
 			MainController.loadFile(plannerFile);
 		}
 		
