@@ -33,9 +33,13 @@ import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.net.Socket;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Scanner;
 
 /**
  * This is a class to handle the code for the chat feature.
@@ -107,8 +111,31 @@ public class ChatController {
 		int port = 8080;
 		
 		try {
+			// Connect to server
 			Socket sock = new Socket("localhost", port);
-			new Thread(new ServerThread(sock)).start();
+			
+			// Handle input
+			Scanner in = new Scanner(System.in);
+			OutputStream os = sock.getOutputStream();
+			PrintWriter pw = new PrintWriter(os, true);
+			
+			// Recieve from server
+			InputStream is = sock.getInputStream();
+			Scanner recieve = new Scanner(is);
+			
+			String incoming, outgoing;
+			while (true) {
+				// Handle sending messages out
+				outgoing = in.nextLine();
+				pw.println(outgoing);
+				pw.flush();
+				
+				// Handle getting messages back
+				incoming = recieve.nextLine();
+				if (incoming != null) {
+					System.out.println(incoming);
+				}
+			}
 		} catch (IOException exc) {
 			System.err.println("Connection error! Aborted.");
 		}
