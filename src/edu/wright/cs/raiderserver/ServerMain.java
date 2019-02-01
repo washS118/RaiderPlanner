@@ -21,9 +21,13 @@
 
 package edu.wright.cs.raiderserver;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 
 /**
  * This class creates the chat server.
@@ -42,9 +46,13 @@ public class ServerMain {
 			ServerSocket ss = new ServerSocket(port);
 			
 			// Listen for new connections
+			ArrayList clients = new ArrayList<ClientThread>();
 			while (true) {
 				try {
 					Socket incomingConn = ss.accept();
+					ClientThread newClient = new ClientThread(incomingConn);
+					new Thread(newClient).start();
+					clients.add(newClient);
 				} catch (IOException exc) {
 					System.err.println("Incoming connection failed!");
 				}
@@ -55,4 +63,47 @@ public class ServerMain {
 		}
 	}
 
+}
+
+/**
+ * This class implements a client manager thread.
+ * @author ajhs2
+ */
+class ClientThread extends ServerMain implements Runnable {
+	
+	private Socket sock;
+	private BufferedReader in;
+	private PrintWriter out;
+	
+	public ClientThread(Socket sock) {
+		this.sock = sock;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Runnable#run()
+	 */
+	@Override
+	public void run() {
+		try {
+			out = new PrintWriter(sock.getOutputStream(), true);
+			in = new BufferedReader(new InputStreamReader(sock.getInputStream()));
+			
+			while (!sock.isClosed()) {
+				String input = in.readLine();
+				if (input != null) {
+					for (ClientThread c : clients) {
+						c.getWriter().write(input);
+					}
+				}
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public PrintWriter getWriter() {
+		return out;
+	}
+	
 }

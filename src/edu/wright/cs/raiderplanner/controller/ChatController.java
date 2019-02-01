@@ -108,8 +108,29 @@ public class ChatController {
 		
 		try {
 			Socket sock = new Socket("localhost", port);
+			new Thread(new ServerThread(sock)).start();
 		} catch (IOException exc) {
 			System.err.println("Connection error! Aborted.");
 		}
 	}
 }
+
+class ServerThread implements Runnable {
+	
+	private Socket sock;
+	
+	public ServerThread(Socket sock) {
+		this.sock = sock;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Runnable#run()
+	 */
+	@Override
+	public void run() {
+		// TODO Auto-generated method stub
+		
+	}
+	
+}
+
