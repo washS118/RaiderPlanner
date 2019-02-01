@@ -21,6 +21,9 @@
 
 package edu.wright.cs.raiderserver;
 
+import java.io.IOException;
+import java.net.ServerSocket;
+
 /**
  * @author lukeg
  *
@@ -31,8 +34,14 @@ public class ServerMain {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		System.out.println("Hello Server");
+		int port = 8080;
+
+		try {
+			ServerSocket ss = new ServerSocket(port);
+		} catch (IOException exc) {
+			System.err.println("A problem has occurred. Aborted.");
+			System.exit(1);
+		}
 	}
 
 }
