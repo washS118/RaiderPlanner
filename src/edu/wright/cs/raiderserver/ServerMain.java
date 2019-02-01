@@ -23,11 +23,14 @@ package edu.wright.cs.raiderserver;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 /**
  * This class creates the chat server.
@@ -46,16 +49,29 @@ public class ServerMain {
 			ServerSocket ss = new ServerSocket(port);
 			
 			// Listen for new connections
-			ArrayList clients = new ArrayList<ClientThread>();
+			Socket incomingConn = ss.accept();
+			
+			// Get message to send to client
+			Scanner in = new Scanner(System.in);
+			OutputStream out = incomingConn.getOutputStream();
+			PrintWriter pw = new PrintWriter(out, true);
+			
+			// Receive new messages
+			InputStream is = incomingConn.getInputStream();
+			Scanner receive = new Scanner(System.in);
+			
+			String outgoing, incoming;
 			while (true) {
-				try {
-					Socket incomingConn = ss.accept();
-					ClientThread newClient = new ClientThread(incomingConn);
-					new Thread(newClient).start();
-					clients.add(newClient);
-				} catch (IOException exc) {
-					System.err.println("Incoming connection failed!");
+				// Get any incoming messages
+				incoming = receive.nextLine();
+				if (incoming != null) {
+					System.out.println(incoming);
 				}
+				
+				// Send any outgoing messages
+				outgoing = in.nextLine();
+				pw.println(outgoing);
+				pw.flush();
 			}
 		} catch (IOException exc) {
 			System.err.println("A problem has occurred. Aborted.");
