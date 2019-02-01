@@ -50,31 +50,33 @@ public class ServerMain {
 			
 			// Listen for new connections
 			Socket incomingConn = ss.accept();
+			System.out.println("Server ready!");
 			
 			// Get message to send to client
-			Scanner in = new Scanner(System.in);
+			BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 			OutputStream out = incomingConn.getOutputStream();
 			PrintWriter pw = new PrintWriter(out, true);
 			
 			// Receive new messages
 			InputStream is = incomingConn.getInputStream();
-			Scanner receive = new Scanner(System.in);
+			BufferedReader receive = new BufferedReader(new InputStreamReader(is));
 			
 			String outgoing, incoming;
 			while (true) {
 				// Get any incoming messages
-				incoming = receive.nextLine();
+				incoming = receive.readLine();
 				if (incoming != null) {
 					System.out.println(incoming);
 				}
 				
 				// Send any outgoing messages
-				outgoing = in.nextLine();
+				outgoing = in.readLine();
 				pw.println(outgoing);
 				pw.flush();
 			}
 		} catch (IOException exc) {
 			System.err.println("A problem has occurred. Aborted.");
+			exc.printStackTrace();
 			System.exit(1);
 		}
 	}
@@ -85,41 +87,41 @@ public class ServerMain {
  * This class implements a client manager thread.
  * @author ajhs2
  */
-class ClientThread extends ServerMain implements Runnable {
-	
-	private Socket sock;
-	private BufferedReader in;
-	private PrintWriter out;
-	
-	public ClientThread(Socket sock) {
-		this.sock = sock;
-	}
-
-	/* (non-Javadoc)
-	 * @see java.lang.Runnable#run()
-	 */
-	@Override
-	public void run() {
-		try {
-			out = new PrintWriter(sock.getOutputStream(), true);
-			in = new BufferedReader(new InputStreamReader(sock.getInputStream()));
-			
-			while (!sock.isClosed()) {
-				String input = in.readLine();
-				if (input != null) {
-					for (ClientThread c : clients) {
-						c.getWriter().write(input);
-					}
-				}
-			}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
-	public PrintWriter getWriter() {
-		return out;
-	}
-	
-}
+//class ClientThread extends ServerMain implements Runnable {
+//	
+//	private Socket sock;
+//	private BufferedReader in;
+//	private PrintWriter out;
+//	
+//	public ClientThread(Socket sock) {
+//		this.sock = sock;
+//	}
+//
+//	/* (non-Javadoc)
+//	 * @see java.lang.Runnable#run()
+//	 */
+//	@Override
+//	public void run() {
+//		try {
+//			out = new PrintWriter(sock.getOutputStream(), true);
+//			in = new BufferedReader(new InputStreamReader(sock.getInputStream()));
+//			
+//			while (!sock.isClosed()) {
+//				String input = in.readLine();
+//				if (input != null) {
+//					for (ClientThread c : clients) {
+//						c.getWriter().write(input);
+//					}
+//				}
+//			}
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//	}
+//	
+//	public PrintWriter getWriter() {
+//		return out;
+//	}
+//	
+//}
