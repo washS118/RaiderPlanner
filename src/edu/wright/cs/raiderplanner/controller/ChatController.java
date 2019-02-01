@@ -32,6 +32,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 
+import java.net.Socket;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -96,5 +97,18 @@ public class ChatController {
 				tfMessageToSend.setText("");
 			}
 		});
+	}
+	
+	/**
+	 * This will create the client connection to the socket server to pass messages between users.
+	 */
+	public static void createClientSocketConnection() {
+		int port = 8080;
+		
+		try {
+			Socket sock = new Socket("localhost", port);
+		} catch (IOException exc) {
+			System.err.println("Connection error! Aborted.");
+		}
 	}
 }
