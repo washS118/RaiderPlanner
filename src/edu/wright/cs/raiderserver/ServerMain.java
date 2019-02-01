@@ -23,21 +23,32 @@ package edu.wright.cs.raiderserver;
 
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.net.Socket;
 
 /**
+ * This class creates the chat server.
  * @author lukeg
- *
  */
 public class ServerMain {
 
 	/**
-	 * @param args
+	 * This starts the socket server listening for connections.
 	 */
 	public static void main(String[] args) {
 		int port = 8080;
 
 		try {
+			// Create the socket server
 			ServerSocket ss = new ServerSocket(port);
+			
+			// Listen for new connections
+			while (true) {
+				try {
+					Socket incomingConn = ss.accept();
+				} catch (IOException exc) {
+					System.err.println("Incoming connection failed!");
+				}
+			}
 		} catch (IOException exc) {
 			System.err.println("A problem has occurred. Aborted.");
 			System.exit(1);
