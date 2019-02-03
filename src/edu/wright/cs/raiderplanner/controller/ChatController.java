@@ -146,49 +146,4 @@ public class ChatController {
 		});
 	}
 	
-	/**
-	 * This will create the client connection to the socket server to pass messages between users.
-	 */
-//	public static void createClientSocketConnection() {
-//		int port = 8080;
-//		
-//		try {
-//			// Connect to server
-//			Socket sock = new Socket("localhost", port);
-//			System.out.println("Client ready!");
-//			
-//			// Handle input
-//			Scanner in = new Scanner(System.in);
-//			OutputStream os = sock.getOutputStream();
-//			PrintWriter pw = new PrintWriter(os, true);
-//			
-//			// Recieve from server
-//			InputStream is = sock.getInputStream();
-//			Scanner recieve = new Scanner(is);
-//			
-//			// Handle I/O...
-//			
-//			// Spawn new background thread to handle receipt
-//			// TODO: Hook into GUI
-//			new Thread(() -> {
-//				while (true) {
-//					if (recieve.hasNext()) {
-//						System.out.println(recieve.nextLine());
-//					}
-//				}
-//			}).start();
-//			
-//			// Get keyboard input on this thread
-//			while (true) {			
-//				pw.println(in.nextLine());
-//				pw.flush();
-//			}
-//		} catch (IOException exc) {
-//			System.err.println("Connection error! Aborted.");
-//		}
-//	}
-//	
-//	public static void main(String[] arga) {
-//		createClientSocketConnection();
-//	}
 }
