@@ -126,18 +126,22 @@ public class ChatController {
 			InputStream is = sock.getInputStream();
 			Scanner recieve = new Scanner(is);
 			
-			String incoming, outgoing;
-			while (true) {
-				// Handle sending messages out
-				outgoing = in.nextLine();
-				pw.println(outgoing);
-				pw.flush();
-				
-				// Handle getting messages back
-				//incoming = recieve.readLine();
-				if (recieve.hasNext()) {
-					System.out.println(recieve.nextLine());
+			// Handle I/O...
+			
+			// Spawn new background thread to handle receipt
+			// TODO: Hook into GUI
+			new Thread(() -> {
+				while (true) {
+					if (recieve.hasNext()) {
+						System.out.println(recieve.nextLine());
+					}
 				}
+			}).start();
+			
+			// Get keyboard input on this thread
+			while (true) {			
+				pw.println(in.nextLine());
+				pw.flush();
 			}
 		} catch (IOException exc) {
 			System.err.println("Connection error! Aborted.");

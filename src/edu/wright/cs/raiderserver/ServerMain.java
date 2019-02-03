@@ -61,18 +61,20 @@ public class ServerMain {
 			InputStream is = incomingConn.getInputStream();
 			Scanner receive = new Scanner(is);
 			
-			// Handle I/O
-			String outgoing, incoming;
-			while (true) {
-				// Get any incoming messages
-				//incoming = receive.readLine();
-				if (receive.hasNext()) {
-					System.out.println(receive.nextLine());
+			// Handle I/O...
+			
+			// Spawn new background thread to handle receipt
+			new Thread(() -> {
+				while (true) {
+					if (receive.hasNext()) {
+						System.out.println(receive.nextLine());
+					}
 				}
-				
-				// Send any outgoing messages
-				outgoing = in.nextLine();
-				pw.println(outgoing);
+			}).start();
+			
+			// Get keyboard input on this thread
+			while (true) {
+				pw.println(in.nextLine());
 				pw.flush();
 			}
 		} catch (IOException exc) {
