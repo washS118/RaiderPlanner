@@ -52,6 +52,10 @@ public class ChatController {
 	private static TextField tfMessageToSend = new TextField();
 	private static TextArea msgArea = new TextArea();
 	private static final Button sendButton = new Button("Send");
+	private static Socket sock;
+	private static int port;
+	private static OutputStream output;
+	private static PrintWriter printOutput;
 
 	/**
 	 * Default Constructor.
@@ -74,6 +78,22 @@ public class ChatController {
 		userMessagePane.add(sendButton, 2, 0);
 		sendButton.setMinWidth(100);
 		sendButton.setDefaultButton(true);
+		createServerConnection();
+	}
+	
+	/**
+	 * This method opens up a connection to the chat server from this client.
+	 */
+	private static void createServerConnection() {
+		port = 8080;
+		try {
+			sock = new Socket("localhost", port);
+			output = sock.getOutputStream();
+			printOutput = new PrintWriter(output, true);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -99,6 +119,8 @@ public class ChatController {
 			if (!(tfMessageToSend.getText().equals(""))) {
 				msgArea.appendText(userName + ": " + tfMessageToSend.getText());
 				msgArea.appendText("\t\t\t" + date.format(time) + "\n");
+				printOutput.println(tfMessageToSend.getText());
+				printOutput.flush();
 				tfMessageToSend.setText("");
 			}
 		});
@@ -107,46 +129,46 @@ public class ChatController {
 	/**
 	 * This will create the client connection to the socket server to pass messages between users.
 	 */
-	public static void createClientSocketConnection() {
-		int port = 8080;
-		
-		try {
-			// Connect to server
-			Socket sock = new Socket("localhost", port);
-			System.out.println("Client ready!");
-			
-			// Handle input
-			Scanner in = new Scanner(System.in);
-			OutputStream os = sock.getOutputStream();
-			PrintWriter pw = new PrintWriter(os, true);
-			
-			// Recieve from server
-			InputStream is = sock.getInputStream();
-			Scanner recieve = new Scanner(is);
-			
-			// Handle I/O...
-			
-			// Spawn new background thread to handle receipt
-			// TODO: Hook into GUI
-			new Thread(() -> {
-				while (true) {
-					if (recieve.hasNext()) {
-						System.out.println(recieve.nextLine());
-					}
-				}
-			}).start();
-			
-			// Get keyboard input on this thread
-			while (true) {			
-				pw.println(in.nextLine());
-				pw.flush();
-			}
-		} catch (IOException exc) {
-			System.err.println("Connection error! Aborted.");
-		}
-	}
-	
-	public static void main(String[] arga) {
-		createClientSocketConnection();
-	}
+//	public static void createClientSocketConnection() {
+//		int port = 8080;
+//		
+//		try {
+//			// Connect to server
+//			Socket sock = new Socket("localhost", port);
+//			System.out.println("Client ready!");
+//			
+//			// Handle input
+//			Scanner in = new Scanner(System.in);
+//			OutputStream os = sock.getOutputStream();
+//			PrintWriter pw = new PrintWriter(os, true);
+//			
+//			// Recieve from server
+//			InputStream is = sock.getInputStream();
+//			Scanner recieve = new Scanner(is);
+//			
+//			// Handle I/O...
+//			
+//			// Spawn new background thread to handle receipt
+//			// TODO: Hook into GUI
+//			new Thread(() -> {
+//				while (true) {
+//					if (recieve.hasNext()) {
+//						System.out.println(recieve.nextLine());
+//					}
+//				}
+//			}).start();
+//			
+//			// Get keyboard input on this thread
+//			while (true) {			
+//				pw.println(in.nextLine());
+//				pw.flush();
+//			}
+//		} catch (IOException exc) {
+//			System.err.println("Connection error! Aborted.");
+//		}
+//	}
+//	
+//	public static void main(String[] arga) {
+//		createClientSocketConnection();
+//	}
 }
