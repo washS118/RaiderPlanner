@@ -56,6 +56,8 @@ public class ChatController {
 	private static int port;
 	private static OutputStream output;
 	private static PrintWriter printOutput;
+	private static InputStream incoming;
+	private static Scanner incomingMessage;
 
 	/**
 	 * Default Constructor.
@@ -78,22 +80,40 @@ public class ChatController {
 		userMessagePane.add(sendButton, 2, 0);
 		sendButton.setMinWidth(100);
 		sendButton.setDefaultButton(true);
-		createServerConnection();
+		setupServerConnection();
 	}
 	
 	/**
 	 * This method opens up a connection to the chat server from this client.
 	 */
-	private static void createServerConnection() {
+	private static void setupServerConnection() {
+		// Establish connection
 		port = 8080;
 		try {
+			// Handle input
 			sock = new Socket("localhost", port);
 			output = sock.getOutputStream();
 			printOutput = new PrintWriter(output, true);
+			
+			// Handle incoming messages
+			incoming = sock.getInputStream();
+			incomingMessage = new Scanner(incoming);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		// Create background thread to grab incoming messages
+		new Thread(() -> {
+			while (true) {
+				if (incomingMessage.hasNext()) {
+					DateTimeFormatter date = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+					LocalDateTime time = LocalDateTime.now();
+					msgArea.appendText("response" + ": " + incomingMessage.nextLine());
+					msgArea.appendText("\t\t\t" + date.format(time) + "\n");
+				}
+			}
+		}).start();
 	}
 
 	/**
