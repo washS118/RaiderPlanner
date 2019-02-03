@@ -118,25 +118,25 @@ public class ChatController {
 			System.out.println("Client ready!");
 			
 			// Handle input
-			BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+			Scanner in = new Scanner(System.in);
 			OutputStream os = sock.getOutputStream();
 			PrintWriter pw = new PrintWriter(os, true);
 			
 			// Recieve from server
 			InputStream is = sock.getInputStream();
-			BufferedReader recieve = new BufferedReader(new InputStreamReader(is));
+			Scanner recieve = new Scanner(is);
 			
 			String incoming, outgoing;
 			while (true) {
 				// Handle sending messages out
-				outgoing = in.readLine();
+				outgoing = in.nextLine();
 				pw.println(outgoing);
 				pw.flush();
 				
 				// Handle getting messages back
-				incoming = recieve.readLine();
-				if (incoming != null) {
-					System.out.println(incoming);
+				//incoming = recieve.readLine();
+				if (recieve.hasNext()) {
+					System.out.println(recieve.nextLine());
 				}
 			}
 		} catch (IOException exc) {

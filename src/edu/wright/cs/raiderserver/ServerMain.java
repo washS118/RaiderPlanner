@@ -53,24 +53,25 @@ public class ServerMain {
 			System.out.println("Server ready!");
 			
 			// Get message to send to client
-			BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+			Scanner in = new Scanner(System.in);
 			OutputStream out = incomingConn.getOutputStream();
 			PrintWriter pw = new PrintWriter(out, true);
 			
 			// Receive new messages
 			InputStream is = incomingConn.getInputStream();
-			BufferedReader receive = new BufferedReader(new InputStreamReader(is));
+			Scanner receive = new Scanner(is);
 			
+			// Handle I/O
 			String outgoing, incoming;
 			while (true) {
 				// Get any incoming messages
-				incoming = receive.readLine();
-				if (incoming != null) {
-					System.out.println(incoming);
+				//incoming = receive.readLine();
+				if (receive.hasNext()) {
+					System.out.println(receive.nextLine());
 				}
 				
 				// Send any outgoing messages
-				outgoing = in.readLine();
+				outgoing = in.nextLine();
 				pw.println(outgoing);
 				pw.flush();
 			}
