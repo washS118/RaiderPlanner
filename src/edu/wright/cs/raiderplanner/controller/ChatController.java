@@ -152,25 +152,3 @@ public class ChatController {
 		createClientSocketConnection();
 	}
 }
-
-
-
-class ServerThread implements Runnable {
-	
-	private Socket sock;
-	
-	public ServerThread(Socket sock) {
-		this.sock = sock;
-	}
-
-	/* (non-Javadoc)
-	 * @see java.lang.Runnable#run()
-	 */
-	@Override
-	public void run() {
-		// TODO Auto-generated method stub
-		
-	}
-	
-}
-
