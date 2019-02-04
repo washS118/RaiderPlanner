@@ -21,18 +21,64 @@
 
 package edu.wright.cs.raiderserver;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.Scanner;
+
 /**
+ * This class creates the chat server.
  * @author lukeg
- *
  */
 public class ServerMain {
 
 	/**
-	 * @param args
+	 * This starts the socket server listening for connections.
 	 */
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		System.out.println("Hello Server");
+		int port = 8080;
+
+		try {
+			// Create the socket server
+			ServerSocket ss = new ServerSocket(port);
+			
+			// Listen for new connections
+			Socket incomingConn = ss.accept();
+			System.out.println("Server ready!");
+			
+			// Get message to send to client
+			Scanner in = new Scanner(System.in);
+			OutputStream out = incomingConn.getOutputStream();
+			PrintWriter pw = new PrintWriter(out, true);
+			
+			// Receive new messages
+			InputStream is = incomingConn.getInputStream();
+			Scanner receive = new Scanner(is);
+			
+			// Handle I/O...
+			
+			// Spawn new background thread to handle receipt
+			new Thread(() -> {
+				while (true) {
+					if (receive.hasNext()) {
+						System.out.println(receive.nextLine());
+					}
+				}
+			}).start();
+			
+			// Get keyboard input on this thread
+			while (true) {
+				pw.println(in.nextLine());
+				pw.flush();
+			}
+		} catch (IOException exc) {
+			System.err.println("A problem has occurred. Aborted.");
+			exc.printStackTrace();
+			System.exit(1);
+		}
 	}
 
 }
