@@ -109,7 +109,11 @@ public class ChatController {
 				if (incomingMessage.hasNext()) {
 					DateTimeFormatter date = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
 					LocalDateTime time = LocalDateTime.now();
-					msgArea.appendText("response" + ": " + incomingMessage.nextLine());
+					String line = incomingMessage.nextLine();
+					String user = line.substring(0, line.indexOf(','));
+					String message = line.substring(line.indexOf(',') + 1);
+					
+					msgArea.appendText(user + ": " + message);
 					msgArea.appendText("\t\t\t" + date.format(time) + "\n");
 				}
 			}
@@ -139,7 +143,7 @@ public class ChatController {
 			if (!(tfMessageToSend.getText().equals(""))) {
 				msgArea.appendText(userName + ": " + tfMessageToSend.getText());
 				msgArea.appendText("\t\t\t" + date.format(time) + "\n");
-				printOutput.println(tfMessageToSend.getText());
+				printOutput.println(userName + "," + tfMessageToSend.getText());
 				printOutput.flush();
 				tfMessageToSend.setText("");
 			}

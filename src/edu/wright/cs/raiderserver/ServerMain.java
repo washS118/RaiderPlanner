@@ -34,7 +34,8 @@ import java.util.Scanner;
  * @author lukeg
  */
 public class ServerMain {
-
+	private static final String serverName = "SERVER";
+	
 	/**
 	 * This starts the socket server listening for connections.
 	 */
@@ -71,7 +72,7 @@ public class ServerMain {
 			
 			// Get keyboard input on this thread
 			while (true) {
-				pw.println(in.nextLine());
+				pw.println(serverName + "," + in.nextLine());
 				pw.flush();
 			}
 		} catch (IOException exc) {
