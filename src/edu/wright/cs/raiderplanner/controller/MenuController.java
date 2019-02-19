@@ -577,7 +577,7 @@ public class MenuController implements Initializable {
 				UiManager.reportError("File does not exist.");
 			}
 			MainController.loadFile(plannerFile);
-			
+
 			try {
 				MainController.ui.reloadMainMenu();
 			} catch (Exception e) {
@@ -585,8 +585,7 @@ public class MenuController implements Initializable {
 				e.printStackTrace();
 			}
 		}
-		
-	}
+}
 
 	/**
 	 * Display the 'Add Activity' window.

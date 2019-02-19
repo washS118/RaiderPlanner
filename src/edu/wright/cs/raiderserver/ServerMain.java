@@ -35,7 +35,7 @@ import java.util.Scanner;
  */
 public class ServerMain {
 	private static final String serverName = "SERVER";
-	
+
 	/**
 	 * This starts the socket server listening for connections.
 	 */
@@ -45,22 +45,22 @@ public class ServerMain {
 		try {
 			// Create the socket server
 			ServerSocket ss = new ServerSocket(port);
-			
+
 			// Listen for new connections
 			Socket incomingConn = ss.accept();
 			System.out.println("Server ready!");
-			
+
 			// Get message to send to client
 			Scanner in = new Scanner(System.in);
 			OutputStream out = incomingConn.getOutputStream();
 			PrintWriter pw = new PrintWriter(out, true);
-			
+
 			// Receive new messages
 			InputStream is = incomingConn.getInputStream();
 			Scanner receive = new Scanner(is);
-			
+
 			// Handle I/O...
-			
+
 			// Spawn new background thread to handle receipt
 			new Thread(() -> {
 				while (true) {
@@ -69,7 +69,7 @@ public class ServerMain {
 					}
 				}
 			}).start();
-			
+
 			// Get keyboard input on this thread
 			while (true) {
 				pw.println(serverName + "," + in.nextLine());
@@ -81,5 +81,4 @@ public class ServerMain {
 			System.exit(1);
 		}
 	}
-
 }

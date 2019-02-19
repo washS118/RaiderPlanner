@@ -82,7 +82,7 @@ public class ChatController {
 		sendButton.setDefaultButton(true);
 		setupServerConnection();
 	}
-	
+
 	/**
 	 * This method opens up a connection to the chat server from this client.
 	 */
@@ -94,7 +94,7 @@ public class ChatController {
 			sock = new Socket("localhost", port);
 			output = sock.getOutputStream();
 			printOutput = new PrintWriter(output, true);
-			
+
 			// Handle incoming messages
 			incoming = sock.getInputStream();
 			incomingMessage = new Scanner(incoming);
@@ -102,7 +102,7 @@ public class ChatController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		// Create background thread to grab incoming messages
 		new Thread(() -> {
 			while (true) {
@@ -149,5 +149,4 @@ public class ChatController {
 			}
 		});
 	}
-	
 }
