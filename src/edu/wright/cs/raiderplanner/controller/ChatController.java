@@ -112,7 +112,7 @@ public class ChatController {
 					String line = incomingMessage.nextLine();
 					String user = line.substring(0, line.indexOf(','));
 					String message = line.substring(line.indexOf(',') + 1);
-					
+
 					msgArea.appendText(user + ": " + message);
 					msgArea.appendText("\t\t\t" + date.format(time) + "\n");
 				}

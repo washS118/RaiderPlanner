@@ -585,7 +585,7 @@ public class MenuController implements Initializable {
 				e.printStackTrace();
 			}
 		}
-}
+	}
 
 	/**
 	 * Display the 'Add Activity' window.
