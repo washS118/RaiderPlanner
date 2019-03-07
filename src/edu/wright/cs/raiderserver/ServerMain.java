@@ -37,8 +37,8 @@ import java.util.Scanner;
 public class ServerMain {
 	private static final String serverName = "SERVER";
 	private static ArrayList<Scanner> clientScanners = new ArrayList();
-	private static ArrayList<Scanner> keyboardScanners = new ArrayList();
 	private static ArrayList<PrintWriter> outputs = new ArrayList();
+	private static Scanner in = new Scanner(System.in);
 	private static ServerSocket ss = null;
 	
 	/**
@@ -64,19 +64,16 @@ public class ServerMain {
 					System.out.println("Server ready!");
 					
 					// Get message to send to client
-					Scanner in = new Scanner(System.in);
 					OutputStream out = incomingConn.getOutputStream();
 					PrintWriter pw = new PrintWriter(out, true);
 					
 					// Receive new messages
 					InputStream is;
 					is = incomingConn.getInputStream();
-					
 					Scanner receive = new Scanner(is);
 					
 					// Add all I/O components to ArrayLists for maintenance
 					clientScanners.add(receive);
-					keyboardScanners.add(in);
 					outputs.add(pw);
 				} catch (IOException e) {
 					e.printStackTrace();
@@ -103,14 +100,10 @@ public class ServerMain {
 		
 		// Get keyboard input on this thread
 		while (true) {
-			// Iterate across all keyboard scanners and see if 
-			//   anything new was typed. Note keyboardScanners
-			//   and outputs should be the same size, so we can
-			//   iterate across these in parallel.
-			for (int i = 0; i < keyboardScanners.size(); i++) {
-				outputs.get(i).println(serverName + "," + 
-						keyboardScanners.get(i).nextLine());
-				outputs.get(i).flush();
+			// Iterate across all outputs to send out messages
+			for (PrintWriter p : outputs) {
+				p.println(serverName + "," + in.nextLine());
+				p.flush();
 			}
 		}
 	}
