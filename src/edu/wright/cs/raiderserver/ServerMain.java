@@ -27,6 +27,7 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 /**
@@ -35,50 +36,82 @@ import java.util.Scanner;
  */
 public class ServerMain {
 	private static final String serverName = "SERVER";
+	private static ArrayList<Scanner> clientScanners = new ArrayList();
+	private static ArrayList<Scanner> keyboardScanners = new ArrayList();
+	private static ArrayList<PrintWriter> outputs = new ArrayList();
+	private static ServerSocket ss = null;
 	
 	/**
 	 * This starts the socket server listening for connections.
 	 */
 	public static void main(String[] args) {
 		int port = 8080;
-
+		
+		// Create the socket server
 		try {
-			// Create the socket server
-			ServerSocket ss = new ServerSocket(port);
-			
-			// Listen for new connections
-			Socket incomingConn = ss.accept();
-			System.out.println("Server ready!");
-			
-			// Get message to send to client
-			Scanner in = new Scanner(System.in);
-			OutputStream out = incomingConn.getOutputStream();
-			PrintWriter pw = new PrintWriter(out, true);
-			
-			// Receive new messages
-			InputStream is = incomingConn.getInputStream();
-			Scanner receive = new Scanner(is);
-			
-			// Handle I/O...
-			
-			// Spawn new background thread to handle receipt
-			new Thread(() -> {
-				while (true) {
-					if (receive.hasNext()) {
-						System.out.println(receive.nextLine());
+			ss = new ServerSocket(port);
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.out.println("IOError occured. Aborted.");
+			System.exit(1);
+		}
+
+		new Thread(() -> {
+			while (true) {
+				try {
+					// Listen for new connections
+					Socket incomingConn = ss.accept();
+					System.out.println("Server ready!");
+					
+					// Get message to send to client
+					Scanner in = new Scanner(System.in);
+					OutputStream out = incomingConn.getOutputStream();
+					PrintWriter pw = new PrintWriter(out, true);
+					
+					// Receive new messages
+					InputStream is;
+					is = incomingConn.getInputStream();
+					
+					Scanner receive = new Scanner(is);
+					
+					// Add all I/O components to ArrayLists for maintenance
+					clientScanners.add(receive);
+					keyboardScanners.add(in);
+					outputs.add(pw);
+				} catch (IOException e) {
+					e.printStackTrace();
+					System.out.println("IOError occured. Aborted.");
+					System.exit(1);
+				}
+			}
+		}).start();
+		
+		// Handle I/O...
+		
+		// Spawn new background thread to handle receipt
+		new Thread(() -> {
+			while (true) {
+				// Iterate across all incoming scanners, see if 
+				//   anything new is coming in
+				for (Scanner s : clientScanners) {
+					if (s.hasNext()) {
+						System.out.println(s.nextLine());
 					}
 				}
-			}).start();
-			
-			// Get keyboard input on this thread
-			while (true) {
-				pw.println(serverName + "," + in.nextLine());
-				pw.flush();
 			}
-		} catch (IOException exc) {
-			System.err.println("A problem has occurred. Aborted.");
-			exc.printStackTrace();
-			System.exit(1);
+		}).start();
+		
+		// Get keyboard input on this thread
+		while (true) {
+			// Iterate across all keyboard scanners and see if 
+			//   anything new was typed. Note keyboardScanners
+			//   and outputs should be the same size, so we can
+			//   iterate across these in parallel.
+			for (int i = 0; i < keyboardScanners.size(); i++) {
+				outputs.get(i).println(serverName + "," + 
+						keyboardScanners.get(i).nextLine());
+				outputs.get(i).flush();
+			}
 		}
 	}
 
