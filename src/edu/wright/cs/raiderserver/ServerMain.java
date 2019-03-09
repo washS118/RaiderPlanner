@@ -21,8 +21,10 @@
 
 package edu.wright.cs.raiderserver;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
@@ -36,10 +38,11 @@ import java.util.Scanner;
  */
 public class ServerMain {
 	private static final String serverName = "SERVER";
-	private static ArrayList<Scanner> clientScanners = new ArrayList();
+	private static ArrayList<BufferedReader> clientScanners = new ArrayList();
 	private static ArrayList<PrintWriter> outputs = new ArrayList();
 	private static Scanner in = new Scanner(System.in);
 	private static ServerSocket ss = null;
+	private static volatile boolean modificationLock = true;
 	
 	/**
 	 * This starts the socket server listening for connections.
@@ -70,11 +73,11 @@ public class ServerMain {
 					// Receive new messages
 					InputStream is;
 					is = incomingConn.getInputStream();
-					Scanner receive = new Scanner(is);
-					
-					// Add all I/O components to ArrayLists for maintenance
-					clientScanners.add(receive);
-					outputs.add(pw);
+					BufferedReader receive = new BufferedReader(
+							new InputStreamReader(is));
+
+					// Start reader thread to get new input from clients
+					spawnClientReaderThread(receive);
 				} catch (IOException e) {
 					e.printStackTrace();
 					System.out.println("IOError occured. Aborted.");
@@ -83,29 +86,34 @@ public class ServerMain {
 			}
 		}).start();
 		
-		// Handle I/O...
-		
+//		// Get keyboard input on this thread
+//		while (true) {
+//			// Iterate across all outputs to send out messages
+//			for (PrintWriter p : outputs) {
+//				p.println(serverName + "," + in.nextLine());
+//				p.flush();
+//			}
+//		}
+	}
+	
+	private static void spawnClientReaderThread(BufferedReader recieve) {
 		// Spawn new background thread to handle receipt
 		new Thread(() -> {
+			String incoming;
 			while (true) {
-				// Iterate across all incoming scanners, see if 
-				//   anything new is coming in
-				for (Scanner s : clientScanners) {
-					if (s.hasNext()) {
-						System.out.println(s.nextLine());
+				try {
+					if ((incoming = recieve.readLine()) != null) {
+						System.out.println("block here");
+						System.out.println(incoming);
+						System.out.println("block gthree");
+						System.out.println(clientScanners.size());
 					}
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 			}
 		}).start();
-		
-		// Get keyboard input on this thread
-		while (true) {
-			// Iterate across all outputs to send out messages
-			for (PrintWriter p : outputs) {
-				p.println(serverName + "," + in.nextLine());
-				p.flush();
-			}
-		}
 	}
 
 }
