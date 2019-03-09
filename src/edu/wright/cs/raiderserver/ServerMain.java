@@ -38,11 +38,9 @@ import java.util.Scanner;
  */
 public class ServerMain {
 	private static final String serverName = "SERVER";
-	private static ArrayList<BufferedReader> clientScanners = new ArrayList();
-	private static ArrayList<PrintWriter> outputs = new ArrayList();
 	private static Scanner in = new Scanner(System.in);
 	private static ServerSocket ss = null;
-	private static volatile boolean modificationLock = true;
+	private static volatile String toSend = "";
 	
 	/**
 	 * This starts the socket server listening for connections.
@@ -78,6 +76,9 @@ public class ServerMain {
 
 					// Start reader thread to get new input from clients
 					spawnClientReaderThread(receive);
+					
+					// Start writer thread to send out a message
+					spawnClientWriterThread(pw);
 				} catch (IOException e) {
 					e.printStackTrace();
 					System.out.println("IOError occured. Aborted.");
@@ -86,14 +87,11 @@ public class ServerMain {
 			}
 		}).start();
 		
-//		// Get keyboard input on this thread
-//		while (true) {
-//			// Iterate across all outputs to send out messages
-//			for (PrintWriter p : outputs) {
-//				p.println(serverName + "," + in.nextLine());
-//				p.flush();
-//			}
-//		}
+		// Get server input on this thread
+		while (true) {
+			toSend = in.nextLine();
+		}
+
 	}
 	
 	private static void spawnClientReaderThread(BufferedReader recieve) {
@@ -103,14 +101,26 @@ public class ServerMain {
 			while (true) {
 				try {
 					if ((incoming = recieve.readLine()) != null) {
-						System.out.println("block here");
 						System.out.println(incoming);
-						System.out.println("block gthree");
-						System.out.println(clientScanners.size());
 					}
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
+				}
+			}
+		}).start();
+	}
+	
+	private static void spawnClientWriterThread(PrintWriter pw) {
+		new Thread(() -> {
+			String lastSent = "";
+			while (true) {
+				// Check if we've already send the current message
+				if (lastSent != toSend) {
+					// Iterate across all outputs to send out messages
+					pw.println(serverName + "," + toSend);
+					pw.flush();
+					lastSent = toSend;
 				}
 			}
 		}).start();
