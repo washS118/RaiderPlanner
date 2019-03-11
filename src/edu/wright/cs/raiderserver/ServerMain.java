@@ -42,10 +42,16 @@ public class ServerMain {
 	private static ServerSocket ss = null;
 	private static volatile String toSend = "";
 	
+	private static ServerHandler handler;
+	
+	
 	/**
 	 * This starts the socket server listening for connections.
 	 */
 	public static void main(String[] args) {
+		handler = new ServerHandler();
+		handler.start();
+		
 		int port = 8080;
 		
 		// Create the socket server
@@ -57,6 +63,31 @@ public class ServerMain {
 			System.exit(1);
 		}
 
+		while(true) {
+			try {
+				//Connect
+				Socket conn = ss.accept();
+				System.out.println("Connected With:");
+				
+				//Create writer
+				OutputStream out = conn.getOutputStream();
+				PrintWriter pWriter = new PrintWriter(out, true);
+				
+				//Create reader
+				InputStream is= conn.getInputStream();
+				BufferedReader bufferedReader = new BufferedReader(
+						new InputStreamReader(is));
+				
+				//Spin up client
+				Client client = new Client(pWriter, bufferedReader);
+				handler.addClient(client);
+			}catch (Exception e) {
+				// TODO: handle exception
+				e.printStackTrace();
+			}
+		}
+		
+		/*
 		new Thread(() -> {
 			while (true) {
 				try {
@@ -91,6 +122,7 @@ public class ServerMain {
 		while (true) {
 			toSend = in.nextLine();
 		}
+		*/
 
 	}
 	
