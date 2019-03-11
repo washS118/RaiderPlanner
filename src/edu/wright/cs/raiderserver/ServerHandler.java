@@ -22,6 +22,7 @@
 package edu.wright.cs.raiderserver;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -41,8 +42,12 @@ public class ServerHandler extends Thread {
 	}
 	
 	public void run() {
+		Iterator<Client> iterator;
 		while(true) {
-			for(Client client : clients) {
+			iterator = clients.iterator();
+			while(iterator.hasNext()) {
+				Client client = iterator.next();
+				
 				String message = client.getMessage();
 				if(message != null) {
 					messages.add(message);
@@ -53,8 +58,9 @@ public class ServerHandler extends Thread {
 				String message = messages.poll();
 				System.out.println(message);
 				
-				for(Client client : clients) {
-					client.addMessage(message);;
+				iterator = clients.iterator();
+				while(iterator.hasNext()) {
+					iterator.next().addMessage(message);
 				}
 			}
 		}

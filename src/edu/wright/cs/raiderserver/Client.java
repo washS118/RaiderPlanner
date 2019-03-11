@@ -24,8 +24,8 @@ package edu.wright.cs.raiderserver;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.LinkedList;
 import java.util.Queue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * @author lukeg
@@ -43,20 +43,24 @@ public class Client extends Thread {
 		this.writer = writer;
 		this.reader = reader;
 		
-		outMessages = new LinkedList<>();
-		inMessages = new LinkedList<>();
+		outMessages = new LinkedBlockingQueue<>();
+		inMessages = new LinkedBlockingQueue<>();
 	}
 	
 	public void run() {
-		String incoming;
 		while (true) {
 			try {
-				while ((incoming = reader.readLine()) != null) {
-					inMessages.add(incoming);
+				
+				while (reader.ready()) {
+					System.out.println("READING");
+					inMessages.add(reader.readLine());
 				}
 				
 				while (!outMessages.isEmpty()) {
-					writer.println(outMessages.poll());
+					System.out.println("WRITING");
+					String mString = outMessages.poll();
+					writer.println(mString);
+					System.out.println(mString);
 				}
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
