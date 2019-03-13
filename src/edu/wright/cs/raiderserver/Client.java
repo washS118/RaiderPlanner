@@ -52,15 +52,12 @@ public class Client extends Thread {
 			try {
 				
 				while (reader.ready()) {
-					System.out.println("READING");
 					inMessages.add(reader.readLine());
 				}
 				
 				while (!outMessages.isEmpty()) {
-					System.out.println("WRITING");
 					String mString = outMessages.poll();
 					writer.println(mString);
-					System.out.println(mString);
 				}
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
