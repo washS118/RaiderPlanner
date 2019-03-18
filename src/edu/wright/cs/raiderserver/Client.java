@@ -35,6 +35,7 @@ public class Client extends Thread {
 
 	private PrintWriter writer;
 	private BufferedReader reader;
+	private static volatile String toSend = "";
 	
 	private volatile Queue<String> outMessages;
 	private volatile Queue<String> inMessages; 
@@ -48,22 +49,51 @@ public class Client extends Thread {
 	}
 	
 	public void run() {
-		while (true) {
-			try {
-				
-				while (reader.ready()) {
-					inMessages.add(reader.readLine());
+//		while (true) {
+//			try {
+//				
+//				while (reader.ready()) {
+//					inMessages.add(reader.readLine());
+//				}
+//				
+//				while (!outMessages.isEmpty()) {
+//					String mString = outMessages.poll();
+//					writer.println(mString);
+//				}
+//			} catch (IOException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//		}
+		
+		// Spawn new background thread to handle receipt
+		new Thread(() -> {
+			String incoming;
+			while (true) {
+				try {
+					if ((incoming = reader.readLine()) != null) {
+						System.out.println(incoming);
+					}
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
-				
-				while (!outMessages.isEmpty()) {
-					String mString = outMessages.poll();
-					writer.println(mString);
-				}
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			}
-		}
+		}).start();
+		
+		// Spawn new writer thread to handle output
+		new Thread(() -> {
+			String lastSent = "";
+			while (true) {
+				// Check if we've already send the current message
+				if (lastSent != toSend) {
+					// Iterate across all outputs to send out messages
+					writer.println("SERVER" + "," + toSend);
+					writer.flush();
+					lastSent = toSend;
+				}
+			}
+		}).start();
 	}
 	
 	protected String getMessage() {
