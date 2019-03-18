@@ -62,31 +62,31 @@ public class ServerMain {
 			System.exit(1);
 		}
 
-		while(true) {
-			try {
-				//Connect
-				Socket conn = ss.accept();
-				System.out.println("Connected With:");
-				
-				//Create writer
-				OutputStream out = conn.getOutputStream();
-				PrintWriter pWriter = new PrintWriter(out, true);
-				
-				//Create reader
-				InputStream is= conn.getInputStream();
-				BufferedReader bufferedReader = new BufferedReader(
-						new InputStreamReader(is));
-				
-				//Spin up client
-				Client client = new Client(pWriter, bufferedReader);
-				handler.addClient(client);
-			}catch (Exception e) {
-				// TODO: handle exception
-				e.printStackTrace();
-			}
-		}
+//		while(true) {
+//			try {
+//				//Connect
+//				Socket conn = ss.accept();
+//				System.out.println("Connected With:");
+//				
+//				//Create writer
+//				OutputStream out = conn.getOutputStream();
+//				PrintWriter pWriter = new PrintWriter(out, true);
+//				
+//				//Create reader
+//				InputStream is= conn.getInputStream();
+//				BufferedReader bufferedReader = new BufferedReader(
+//						new InputStreamReader(is));
+//				
+//				//Spin up client
+//				Client client = new Client(pWriter, bufferedReader);
+//				handler.addClient(client);
+//			}catch (Exception e) {
+//				// TODO: handle exception
+//				e.printStackTrace();
+//			}
+//		}
 		
-		/*
+		
 		new Thread(() -> {
 			while (true) {
 				try {
@@ -121,7 +121,7 @@ public class ServerMain {
 		while (true) {
 			toSend = in.nextLine();
 		}
-		*/
+		
 
 	}
 	
@@ -133,6 +133,7 @@ public class ServerMain {
 				try {
 					if ((incoming = recieve.readLine()) != null) {
 						System.out.println(incoming);
+						toSend = incoming;
 					}
 				} catch (IOException e) {
 					// TODO Auto-generated catch block

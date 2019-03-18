@@ -110,8 +110,14 @@ public class ChatController {
 					DateTimeFormatter date = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
 					LocalDateTime time = LocalDateTime.now();
 					String[] tokens = incomingMessage.nextLine().split(",");
-					String user = tokens[0];
-					String message = tokens[1];
+					String user, message;
+					if (tokens.length == 2) {
+						user = tokens[0];
+						message = tokens[1];
+					} else {
+						user = tokens[1];
+						message = tokens[2];
+					}
 					
 					msgArea.appendText(user + ": " + message);
 					msgArea.appendText("\t\t\t" + date.format(time) + "\n");
