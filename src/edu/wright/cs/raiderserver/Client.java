@@ -49,23 +49,23 @@ public class Client extends Thread {
 	}
 	
 	public void run() {
-//		while (true) {
-//			try {
-//				
-//				while (reader.ready()) {
-//					inMessages.add(reader.readLine());
-//				}
-//				
-//				while (!outMessages.isEmpty()) {
-//					String mString = outMessages.poll();
-//					writer.println(mString);
-//				}
-//			} catch (IOException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//		}
-		
+		while (true) {
+			try {
+				
+				while (reader.ready()) {
+					inMessages.add(reader.readLine());
+				}
+				
+				while (!outMessages.isEmpty()) {
+					String mString = outMessages.poll();
+					writer.println(mString);
+				}
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+/*		
 		// Spawn new background thread to handle receipt
 		new Thread(() -> {
 			String incoming;
@@ -94,7 +94,9 @@ public class Client extends Thread {
 				}
 			}
 		}).start();
+*/
 	}
+
 	
 	protected String getMessage() {
 		return inMessages.poll();

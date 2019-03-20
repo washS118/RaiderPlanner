@@ -115,8 +115,8 @@ public class ChatController {
 						user = tokens[0];
 						message = tokens[1];
 					} else {
-						user = tokens[1];
-						message = tokens[2];
+						user = "";
+						message = tokens[0];
 					}
 					
 					msgArea.appendText(user + ": " + message);

@@ -90,37 +90,37 @@ public class ServerMain {
 		new Thread(() -> {
 			while (true) {
 				try {
-					// Listen for new connections
-					Socket incomingConn = ss.accept();
-					System.out.println("Server ready!");
+					//Connect
+					Socket conn = ss.accept();
+					System.out.println("Connected With:");
 					
-					// Get message to send to client
-					OutputStream out = incomingConn.getOutputStream();
-					PrintWriter pw = new PrintWriter(out, true);
-					
-					// Receive new messages
-					InputStream is;
-					is = incomingConn.getInputStream();
-					BufferedReader receive = new BufferedReader(
+					//Create writer
+					OutputStream out = conn.getOutputStream();
+					PrintWriter pWriter = new PrintWriter(out, true);
+				
+					//Create reader
+					InputStream is= conn.getInputStream();
+					BufferedReader bufferedReader = new BufferedReader(
 							new InputStreamReader(is));
-
-					// Start reader thread to get new input from clients
-					spawnClientReaderThread(receive);
 					
-					// Start writer thread to send out a message
-					spawnClientWriterThread(pw);
-				} catch (IOException e) {
+					//Spin up client
+					Client client = new Client(pWriter, bufferedReader);
+					
+					synchronized (handler) {
+						handler.addClient(client);
+					}
+					
+				}catch (Exception e) {
+					// TODO: handle exception
 					e.printStackTrace();
-					System.out.println("IOError occured. Aborted.");
-					System.exit(1);
 				}
 			}
 		}).start();
 		
 		// Get server input on this thread
-		while (true) {
-			toSend = in.nextLine();
-		}
+//		while (true) {
+//			toSend = in.nextLine();
+//		}
 		
 
 	}
