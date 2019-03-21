@@ -40,19 +40,19 @@ public class ServerMain {
 	private static Scanner in = new Scanner(System.in);
 	private static ServerSocket ss = null;
 	private static volatile String toSend = "";
-	
+
 	private static ServerHandler handler;
-	
-	
+
+
 	/**
 	 * This starts the socket server listening for connections.
 	 */
 	public static void main(String[] args) {
 		handler = new ServerHandler();
 		handler.start();
-		
+
 		int port = 8080;
-		
+
 		// Create the socket server
 		try {
 			ss = new ServerSocket(port);
@@ -67,16 +67,16 @@ public class ServerMain {
 //				//Connect
 //				Socket conn = ss.accept();
 //				System.out.println("Connected With:");
-//				
+//
 //				//Create writer
 //				OutputStream out = conn.getOutputStream();
 //				PrintWriter pWriter = new PrintWriter(out, true);
-//				
+//
 //				//Create reader
 //				InputStream is= conn.getInputStream();
 //				BufferedReader bufferedReader = new BufferedReader(
 //						new InputStreamReader(is));
-//				
+//
 //				//Spin up client
 //				Client client = new Client(pWriter, bufferedReader);
 //				handler.addClient(client);
@@ -85,46 +85,49 @@ public class ServerMain {
 //				e.printStackTrace();
 //			}
 //		}
-		
-		
+
+
 		new Thread(() -> {
 			while (true) {
 				try {
 					//Connect
 					Socket conn = ss.accept();
 					System.out.println("Connected With:");
-					
+
 					//Create writer
 					OutputStream out = conn.getOutputStream();
-					PrintWriter pWriter = new PrintWriter(out, true);
-				
+					PrintWriter prtWriter = new PrintWriter(out, true);
+
 					//Create reader
-					InputStream is= conn.getInputStream();
+					InputStream is = conn.getInputStream();
 					BufferedReader bufferedReader = new BufferedReader(
 							new InputStreamReader(is));
-					
+
 					//Spin up client
-					Client client = new Client(pWriter, bufferedReader);
-					
+					Client client = new Client(prtWriter, bufferedReader);
+
 					synchronized (handler) {
 						handler.addClient(client);
 					}
-					
-				}catch (Exception e) {
+
+				} catch (Exception e) {
 					// TODO: handle exception
 					e.printStackTrace();
 				}
 			}
 		}).start();
-		
+
 		// Get server input on this thread
 //		while (true) {
 //			toSend = in.nextLine();
 //		}
-		
+
 
 	}
-	
+
+	/**
+	 * Spawn a new client reader thread.
+	 */
 	private static void spawnClientReaderThread(BufferedReader recieve) {
 		// Spawn new background thread to handle receipt
 		new Thread(() -> {
@@ -142,7 +145,10 @@ public class ServerMain {
 			}
 		}).start();
 	}
-	
+
+	/**
+	 * Spawn a new client writer thread.
+	 */
 	private static void spawnClientWriterThread(PrintWriter pw) {
 		new Thread(() -> {
 			String lastSent = "";

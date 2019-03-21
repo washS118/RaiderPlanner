@@ -82,7 +82,7 @@ public class ChatController {
 		sendButton.setDefaultButton(true);
 		setupServerConnection();
 	}
-	
+
 	/**
 	 * This method opens up a connection to the chat server from this client.
 	 */
@@ -94,7 +94,7 @@ public class ChatController {
 			sock = new Socket("localhost", port);
 			output = sock.getOutputStream();
 			printOutput = new PrintWriter(output, true);
-			
+
 			// Handle incoming messages
 			incoming = sock.getInputStream();
 			incomingMessage = new Scanner(incoming);
@@ -102,7 +102,7 @@ public class ChatController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		// Create background thread to grab incoming messages
 		new Thread(() -> {
 			while (true) {
@@ -110,7 +110,8 @@ public class ChatController {
 					DateTimeFormatter date = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
 					LocalDateTime time = LocalDateTime.now();
 					String[] tokens = incomingMessage.nextLine().split(",");
-					String user, message;
+					String user;
+					String message;
 					if (tokens.length == 2) {
 						user = tokens[0];
 						message = tokens[1];
@@ -118,7 +119,7 @@ public class ChatController {
 						user = "";
 						message = tokens[0];
 					}
-					
+
 					msgArea.appendText(user + ": " + message);
 					msgArea.appendText("\t\t\t" + date.format(time) + "\n");
 				}
@@ -153,5 +154,5 @@ public class ChatController {
 			}
 		});
 	}
-	
+
 }

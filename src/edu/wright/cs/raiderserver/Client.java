@@ -28,6 +28,8 @@ import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
+ * This class defines the implementation of a chat client thread.
+ * 
  * @author lukeg
  *
  */
@@ -36,36 +38,42 @@ public class Client extends Thread {
 	private PrintWriter writer;
 	private BufferedReader reader;
 	private static volatile String toSend = "";
-	
+
 	private volatile Queue<String> outMessages;
 	private volatile Queue<String> inMessages; 
-	
+
+	/**
+	 * Construct a client instance.
+	 */
 	public Client(PrintWriter writer, BufferedReader reader) {
 		this.writer = writer;
 		this.reader = reader;
-		
+
 		outMessages = new LinkedBlockingQueue<>();
 		inMessages = new LinkedBlockingQueue<>();
 	}
-	
+
+	/**
+	 * Main client thread code. This is what executes when a new thread starts.
+	 */
 	public void run() {
 		while (true) {
 			try {
-				
+
 				while (reader.ready()) {
 					inMessages.add(reader.readLine());
 				}
-				
+
 				while (!outMessages.isEmpty()) {
-					String mString = outMessages.poll();
-					writer.println(mString);
+					String msgString = outMessages.poll();
+					writer.println(msgString);
 				}
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
-/*		
+/*
 		// Spawn new background thread to handle receipt
 		new Thread(() -> {
 			String incoming;
@@ -80,7 +88,7 @@ public class Client extends Thread {
 				}
 			}
 		}).start();
-		
+
 		// Spawn new writer thread to handle output
 		new Thread(() -> {
 			String lastSent = "";
@@ -97,11 +105,16 @@ public class Client extends Thread {
 */
 	}
 
-	
+	/**
+	 * Get message from the incoming client message queue.
+	 */
 	protected String getMessage() {
 		return inMessages.poll();
 	}
-	
+
+	/**
+	 * Add outgoing message to client message queue.
+	 */
 	protected void addMessage(String message) {
 		outMessages.add(message);
 	}
