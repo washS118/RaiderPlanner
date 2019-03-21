@@ -60,9 +60,9 @@ public class ServerHandler extends Thread {
 	 */
 	public void run() {
 		Iterator<Client> iterator;
-		while(true) {
+		while (true) {
 			try {
-				if(in.ready()) {
+				if (in.ready()) {
 					messages.add(serverName + "," + in.readLine());
 				}
 			} catch (IOException e) {
@@ -72,21 +72,21 @@ public class ServerHandler extends Thread {
 
 			synchronized (this) {
 				iterator = clients.iterator();
-				while(iterator.hasNext()) {
+				while (iterator.hasNext()) {
 					Client client = iterator.next();
 
 					String message = client.getMessage();
-					if(message != null) {
+					if (message != null) {
 						messages.add(message);
 					}
 				}
 
-				while(!messages.isEmpty()) {
+				while (!messages.isEmpty()) {
 					String message = messages.poll();
 					System.out.println(message);
 
 					iterator = clients.iterator();
-					while(iterator.hasNext()) {
+					while (iterator.hasNext()) {
 						iterator.next().addMessage(message);
 					}
 				}

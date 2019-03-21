@@ -29,7 +29,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * This class defines the implementation of a chat client thread.
- * 
+ *
  * @author lukeg
  *
  */
@@ -40,7 +40,7 @@ public class Client extends Thread {
 	private static volatile String toSend = "";
 
 	private volatile Queue<String> outMessages;
-	private volatile Queue<String> inMessages; 
+	private volatile Queue<String> inMessages;
 
 	/**
 	 * Construct a client instance.
