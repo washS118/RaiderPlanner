@@ -73,36 +73,6 @@ public class Client extends Thread {
 				e.printStackTrace();
 			}
 		}
-/*
-		// Spawn new background thread to handle receipt
-		new Thread(() -> {
-			String incoming;
-			while (true) {
-				try {
-					if ((incoming = reader.readLine()) != null) {
-						System.out.println(incoming);
-					}
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		}).start();
-
-		// Spawn new writer thread to handle output
-		new Thread(() -> {
-			String lastSent = "";
-			while (true) {
-				// Check if we've already send the current message
-				if (lastSent != toSend) {
-					// Iterate across all outputs to send out messages
-					writer.println("SERVER" + "," + toSend);
-					writer.flush();
-					lastSent = toSend;
-				}
-			}
-		}).start();
-*/
 	}
 
 	/**

@@ -62,31 +62,6 @@ public class ServerMain {
 			System.exit(1);
 		}
 
-//		while(true) {
-//			try {
-//				//Connect
-//				Socket conn = ss.accept();
-//				System.out.println("Connected With:");
-//
-//				//Create writer
-//				OutputStream out = conn.getOutputStream();
-//				PrintWriter pWriter = new PrintWriter(out, true);
-//
-//				//Create reader
-//				InputStream is= conn.getInputStream();
-//				BufferedReader bufferedReader = new BufferedReader(
-//						new InputStreamReader(is));
-//
-//				//Spin up client
-//				Client client = new Client(pWriter, bufferedReader);
-//				handler.addClient(client);
-//			}catch (Exception e) {
-//				// TODO: handle exception
-//				e.printStackTrace();
-//			}
-//		}
-
-
 		new Thread(() -> {
 			while (true) {
 				try {
@@ -116,52 +91,5 @@ public class ServerMain {
 				}
 			}
 		}).start();
-
-		// Get server input on this thread
-//		while (true) {
-//			toSend = in.nextLine();
-//		}
-
-
 	}
-
-	/**
-	 * Spawn a new client reader thread.
-	 */
-	private static void spawnClientReaderThread(BufferedReader recieve) {
-		// Spawn new background thread to handle receipt
-		new Thread(() -> {
-			String incoming;
-			while (true) {
-				try {
-					if ((incoming = recieve.readLine()) != null) {
-						System.out.println(incoming);
-						toSend = incoming;
-					}
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		}).start();
-	}
-
-	/**
-	 * Spawn a new client writer thread.
-	 */
-	private static void spawnClientWriterThread(PrintWriter pw) {
-		new Thread(() -> {
-			String lastSent = "";
-			while (true) {
-				// Check if we've already send the current message
-				if (lastSent != toSend) {
-					// Iterate across all outputs to send out messages
-					pw.println(serverName + "," + toSend);
-					pw.flush();
-					lastSent = toSend;
-				}
-			}
-		}).start();
-	}
-
 }
