@@ -29,6 +29,7 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.HashMap;
 
 /**
  * This class creates the chat server.
@@ -36,14 +37,13 @@ import java.net.Socket;
  */
 public class ServerMain {
 	private static ServerSocket ss = null;
-	private static ServerHandler handler;
+	private static HashMap<String, ServerHandler> handlerMap;
 
 	/**
 	 * This starts the socket server listening for connections.
 	 */
 	public static void main(String[] args) {
-		handler = new ServerHandler();
-		handler.start();
+		handlerMap = new HashMap<>();
 
 		int port = 8080;
 
@@ -75,12 +75,18 @@ public class ServerMain {
 					// Block, waiting for client to send over hostname
 					String hostname = bufferedReader.readLine();
 					System.out.println("Host: " + hostname);
+					
+					// Determine if we need to create new handler for this room
+					if (!handlerMap.containsKey(hostname)) {
+						handlerMap.put(hostname, new ServerHandler());
+						handlerMap.get(hostname).start();
+					}
 
 					//Spin up client
 					Client client = new Client(prtWriter, bufferedReader);
 
-					synchronized (handler) {
-						handler.addClient(client);
+					synchronized (handlerMap) {
+						handlerMap.get(hostname).addClient(client);
 					}
 
 				} catch (Exception e) {
