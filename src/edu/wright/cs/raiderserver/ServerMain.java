@@ -29,20 +29,14 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Scanner;
 
 /**
  * This class creates the chat server.
  * @author lukeg
  */
 public class ServerMain {
-	private static final String serverName = "SERVER";
-	private static Scanner in = new Scanner(System.in);
 	private static ServerSocket ss = null;
-	private static volatile String toSend = "";
-
 	private static ServerHandler handler;
-
 
 	/**
 	 * This starts the socket server listening for connections.
@@ -58,7 +52,7 @@ public class ServerMain {
 			ss = new ServerSocket(port);
 		} catch (IOException e) {
 			e.printStackTrace();
-			System.out.println("IOError occured. Aborted.");
+			System.out.println("IOError occurred. Aborted.");
 			System.exit(1);
 		}
 
@@ -77,6 +71,10 @@ public class ServerMain {
 					InputStream is = conn.getInputStream();
 					BufferedReader bufferedReader = new BufferedReader(
 							new InputStreamReader(is));
+
+					// Block, waiting for client to send over hostname
+					String hostname = bufferedReader.readLine();
+					System.out.println("Host: " + hostname);
 
 					//Spin up client
 					Client client = new Client(prtWriter, bufferedReader);

@@ -41,6 +41,8 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 
+import edu.wright.cs.raiderplanner.controller.MenuController;
+
 /**
  * This is a class to handle the code for the chat feature.
  * @author MichaelPantoja
@@ -58,6 +60,7 @@ public class ChatController {
 	private static PrintWriter printOutput;
 	private static InputStream incoming;
 	private static Scanner incomingMessage;
+	private static String hostName;
 
 	/**
 	 * Default Constructor.
@@ -89,6 +92,7 @@ public class ChatController {
 	private static void setupServerConnection() {
 		// Establish connection
 		port = 8080;
+		hostName = MenuController.getHostName();
 		try {
 			// Handle input
 			sock = new Socket("localhost", port);
@@ -98,6 +102,11 @@ public class ChatController {
 			// Handle incoming messages
 			incoming = sock.getInputStream();
 			incomingMessage = new Scanner(incoming);
+
+			// Send hostname across to serverMain
+			// This is done before client created, so it won't go to screen
+			printOutput.println(hostName);
+			printOutput.flush();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -154,5 +163,4 @@ public class ChatController {
 			}
 		});
 	}
-
 }
