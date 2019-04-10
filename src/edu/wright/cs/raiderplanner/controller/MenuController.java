@@ -209,7 +209,7 @@ public class MenuController implements Initializable {
 	private boolean chatConnection = true;
 	private Alert chatConnectionStatus = new Alert(AlertType.ERROR);
 	private Alert invalidInputAlert = new Alert(AlertType.ERROR);
-	private String userName;
+	private static String userName;
 	private static String hostName;
 	private int portNumber = 1111;
 
@@ -1225,7 +1225,7 @@ public class MenuController implements Initializable {
 	 *
 	 * @return the currently registered user's chat ID.
 	 */
-	public String getUserName() {
+	public static String getUserName() {
 		return userName;
 	}
 

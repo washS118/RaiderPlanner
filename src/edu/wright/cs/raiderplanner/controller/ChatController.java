@@ -61,6 +61,7 @@ public class ChatController {
 	private static InputStream incoming;
 	private static Scanner incomingMessage;
 	private static String hostName;
+	private static String userName;
 
 	/**
 	 * Default Constructor.
@@ -93,6 +94,7 @@ public class ChatController {
 		// Establish connection
 		port = 8080;
 		hostName = MenuController.getHostName();
+		userName = MenuController.getUserName();
 		try {
 			// Handle input
 			sock = new Socket("localhost", port);
@@ -105,7 +107,7 @@ public class ChatController {
 
 			// Send hostname across to serverMain
 			// This is done before client created, so it won't go to screen
-			printOutput.println(hostName);
+			printOutput.println(hostName + "," + userName);
 			printOutput.flush();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -157,7 +159,7 @@ public class ChatController {
 			DateTimeFormatter date = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
 			LocalDateTime time = LocalDateTime.now();
 			if (!(tfMessageToSend.getText().equals(""))) {
-				printOutput.println(userName + "," + tfMessageToSend.getText());
+				printOutput.println(tfMessageToSend.getText());
 				printOutput.flush();
 				tfMessageToSend.setText("");
 			}

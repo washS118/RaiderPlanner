@@ -60,8 +60,7 @@ public class ServerMain {
 			while (true) {
 				try {
 					//Connect
-					Socket conn = ss.accept();
-					System.out.println("Connected With:");
+					Socket conn = ss.accept();		
 
 					//Create writer
 					OutputStream out = conn.getOutputStream();
@@ -73,7 +72,11 @@ public class ServerMain {
 							new InputStreamReader(is));
 
 					// Block, waiting for client to send over hostname
-					String hostname = bufferedReader.readLine();
+					String names[] = bufferedReader.readLine().split(",");
+					String hostname = names[0];
+					String username = names[1];
+					
+					System.out.println("Connected With: " + username);
 					System.out.println("Host: " + hostname);
 					
 					// Determine if we need to create new handler for this room
@@ -83,7 +86,7 @@ public class ServerMain {
 					}
 
 					//Spin up client
-					Client client = new Client(prtWriter, bufferedReader);
+					Client client = new Client(username, prtWriter, bufferedReader);
 
 					synchronized (handlerMap) {
 						handlerMap.get(hostname).addClient(client);

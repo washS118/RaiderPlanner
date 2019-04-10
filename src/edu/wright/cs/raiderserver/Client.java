@@ -27,6 +27,8 @@ import java.io.PrintWriter;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import biweekly.property.Name;
+
 /**
  * This class defines the implementation of a chat client thread.
  *
@@ -38,6 +40,7 @@ public class Client extends Thread {
 	private PrintWriter writer;
 	private BufferedReader reader;
 	private static volatile String toSend = "";
+	private String username;
 
 	private volatile Queue<String> outMessages;
 	private volatile Queue<String> inMessages;
@@ -45,9 +48,10 @@ public class Client extends Thread {
 	/**
 	 * Construct a client instance.
 	 */
-	public Client(PrintWriter writer, BufferedReader reader) {
+	public Client(String name, PrintWriter writer, BufferedReader reader) {
 		this.writer = writer;
 		this.reader = reader;
+		this.username = name;
 
 		outMessages = new LinkedBlockingQueue<>();
 		inMessages = new LinkedBlockingQueue<>();
@@ -61,7 +65,7 @@ public class Client extends Thread {
 			try {
 
 				while (reader.ready()) {
-					inMessages.add(reader.readLine());
+					inMessages.add(username + "," + reader.readLine());
 				}
 
 				while (!outMessages.isEmpty()) {
@@ -87,5 +91,9 @@ public class Client extends Thread {
 	 */
 	protected void addMessage(String message) {
 		outMessages.add(message);
+	}
+	
+	public String getUsername() {
+		return username;
 	}
 }

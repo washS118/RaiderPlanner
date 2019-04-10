@@ -39,6 +39,7 @@ import java.util.Queue;
  */
 public class ServerHandler extends Thread {
 	private static final String serverName = "SERVER";
+	private static final String welcomeMessage = " has joined the server.";
 	private volatile List<Client> clients;
 	private Queue<String> messages;
 	private BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
@@ -96,5 +97,6 @@ public class ServerHandler extends Thread {
 	protected void addClient(Client client) {
 		clients.add(client);
 		client.start();
+		messages.add(serverName + "," + client.getUsername() + welcomeMessage);
 	}
 }
