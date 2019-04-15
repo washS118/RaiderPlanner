@@ -72,7 +72,8 @@ public class ServerMain {
 							new InputStreamReader(is));
 
 					// Block, waiting for client to send over hostname
-					String names[] = bufferedReader.readLine().split(",");
+					String in = bufferedReader.readLine();
+					String names[] = in.split(",");
 					String hostname = names[0];
 					String username = names[1];
 					
