@@ -96,7 +96,6 @@ public class ServerMain {
 				} catch (Exception e) {
 					// TODO: handle exception
 					e.printStackTrace();
-
 				}
 			}
 		}).start();
