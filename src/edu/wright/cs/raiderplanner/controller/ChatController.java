@@ -41,6 +41,8 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 
+import edu.wright.cs.raiderplanner.controller.MenuController;
+
 /**
  * This is a class to handle the code for the chat feature.
  * @author MichaelPantoja
@@ -58,6 +60,8 @@ public class ChatController {
 	private static PrintWriter printOutput;
 	private static InputStream incoming;
 	private static Scanner incomingMessage;
+	private static String hostName;
+	private static String userName;
 
 	/**
 	 * Default Constructor.
@@ -82,27 +86,34 @@ public class ChatController {
 		sendButton.setDefaultButton(true);
 		setupServerConnection();
 	}
-	
+
 	/**
 	 * This method opens up a connection to the chat server from this client.
 	 */
 	private static void setupServerConnection() {
 		// Establish connection
 		port = 8080;
+		hostName = MenuController.getHostName();
+		userName = MenuController.getUserName();
 		try {
 			// Handle input
 			sock = new Socket("localhost", port);
 			output = sock.getOutputStream();
 			printOutput = new PrintWriter(output, true);
-			
+
 			// Handle incoming messages
 			incoming = sock.getInputStream();
 			incomingMessage = new Scanner(incoming);
+
+			// Send hostname across to serverMain
+			// This is done before client created, so it won't go to screen
+			printOutput.println(hostName + "," + userName);
+			printOutput.flush();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		// Create background thread to grab incoming messages
 		new Thread(() -> {
 			while (true) {
@@ -110,7 +121,8 @@ public class ChatController {
 					DateTimeFormatter date = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
 					LocalDateTime time = LocalDateTime.now();
 					String[] tokens = incomingMessage.nextLine().split(",");
-					String user, message;
+					String user;
+					String message;
 					if (tokens.length == 2) {
 						user = tokens[0];
 						message = tokens[1];
@@ -118,7 +130,7 @@ public class ChatController {
 						user = "";
 						message = tokens[0];
 					}
-					
+
 					msgArea.appendText(user + ": " + message);
 					msgArea.appendText("\t\t\t" + date.format(time) + "\n");
 				}
@@ -147,11 +159,10 @@ public class ChatController {
 			DateTimeFormatter date = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
 			LocalDateTime time = LocalDateTime.now();
 			if (!(tfMessageToSend.getText().equals(""))) {
-				printOutput.println(userName + "," + tfMessageToSend.getText());
+				printOutput.println(tfMessageToSend.getText());
 				printOutput.flush();
 				tfMessageToSend.setText("");
 			}
 		});
 	}
-	
 }

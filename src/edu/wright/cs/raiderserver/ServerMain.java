@@ -29,133 +29,75 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Scanner;
+import java.util.HashMap;
 
 /**
  * This class creates the chat server.
  * @author lukeg
  */
 public class ServerMain {
-	private static final String serverName = "SERVER";
-	private static Scanner in = new Scanner(System.in);
 	private static ServerSocket ss = null;
-	private static volatile String toSend = "";
-	
-	private static ServerHandler handler;
-	
-	
+	private static HashMap<String, ServerHandler> handlerMap;
+
 	/**
 	 * This starts the socket server listening for connections.
 	 */
 	public static void main(String[] args) {
-		handler = new ServerHandler();
-		handler.start();
-		
+		handlerMap = new HashMap<>();
+
 		int port = 8080;
-		
+
 		// Create the socket server
 		try {
 			ss = new ServerSocket(port);
 		} catch (IOException e) {
 			e.printStackTrace();
-			System.out.println("IOError occured. Aborted.");
+			System.out.println("IOError occurred. Aborted.");
 			System.exit(1);
 		}
 
-//		while(true) {
-//			try {
-//				//Connect
-//				Socket conn = ss.accept();
-//				System.out.println("Connected With:");
-//				
-//				//Create writer
-//				OutputStream out = conn.getOutputStream();
-//				PrintWriter pWriter = new PrintWriter(out, true);
-//				
-//				//Create reader
-//				InputStream is= conn.getInputStream();
-//				BufferedReader bufferedReader = new BufferedReader(
-//						new InputStreamReader(is));
-//				
-//				//Spin up client
-//				Client client = new Client(pWriter, bufferedReader);
-//				handler.addClient(client);
-//			}catch (Exception e) {
-//				// TODO: handle exception
-//				e.printStackTrace();
-//			}
-//		}
-		
-		
 		new Thread(() -> {
 			while (true) {
 				try {
 					//Connect
-					Socket conn = ss.accept();
-					System.out.println("Connected With:");
-					
+					Socket conn = ss.accept();		
+
 					//Create writer
 					OutputStream out = conn.getOutputStream();
-					PrintWriter pWriter = new PrintWriter(out, true);
-				
+					PrintWriter prtWriter = new PrintWriter(out, true);
+
 					//Create reader
-					InputStream is= conn.getInputStream();
+					InputStream is = conn.getInputStream();
 					BufferedReader bufferedReader = new BufferedReader(
 							new InputStreamReader(is));
+
+					// Block, waiting for client to send over hostname
+					String in = bufferedReader.readLine();
+					String names[] = in.split(",");
+					String hostname = names[0];
+					String username = names[1];
 					
-					//Spin up client
-					Client client = new Client(pWriter, bufferedReader);
+					System.out.println("Connected With: " + username);
+					System.out.println("Host: " + hostname);
 					
-					synchronized (handler) {
-						handler.addClient(client);
+					// Determine if we need to create new handler for this room
+					if (!handlerMap.containsKey(hostname)) {
+						handlerMap.put(hostname, new ServerHandler());
+						handlerMap.get(hostname).start();
 					}
-					
-				}catch (Exception e) {
+
+					//Spin up client
+					Client client = new Client(username, prtWriter, bufferedReader);
+
+					synchronized (handlerMap) {
+						handlerMap.get(hostname).addClient(client);
+					}
+
+				} catch (Exception e) {
 					// TODO: handle exception
 					e.printStackTrace();
 				}
 			}
 		}).start();
-		
-		// Get server input on this thread
-//		while (true) {
-//			toSend = in.nextLine();
-//		}
-		
-
 	}
-	
-	private static void spawnClientReaderThread(BufferedReader recieve) {
-		// Spawn new background thread to handle receipt
-		new Thread(() -> {
-			String incoming;
-			while (true) {
-				try {
-					if ((incoming = recieve.readLine()) != null) {
-						System.out.println(incoming);
-						toSend = incoming;
-					}
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		}).start();
-	}
-	
-	private static void spawnClientWriterThread(PrintWriter pw) {
-		new Thread(() -> {
-			String lastSent = "";
-			while (true) {
-				// Check if we've already send the current message
-				if (lastSent != toSend) {
-					// Iterate across all outputs to send out messages
-					pw.println(serverName + "," + toSend);
-					pw.flush();
-					lastSent = toSend;
-				}
-			}
-		}).start();
-	}
-
 }

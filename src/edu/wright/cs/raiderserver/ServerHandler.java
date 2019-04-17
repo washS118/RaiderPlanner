@@ -30,65 +30,73 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
-import java.util.Scanner;
 
 /**
+ * This class defines the backend server implementation for the chat system.
+ *
  * @author lukeg
  *
  */
 public class ServerHandler extends Thread {
 	private static final String serverName = "SERVER";
-
+	private static final String welcomeMessage = " has joined the server.";
 	private volatile List<Client> clients;
-	
 	private Queue<String> messages;
-	
 	private BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-	
+
+	/**
+	 * Construct a ServerHandler instance.
+	 */
 	public ServerHandler() {
 		clients = Collections.synchronizedList(new ArrayList<Client>());
 		messages = new LinkedList<>();
 	}
-	
+
+	/**
+	 * Server thread implementation.
+	 */
 	public void run() {
 		Iterator<Client> iterator;
-		while(true) {
+		while (true) {
 			try {
-				if(in.ready()) {
+				if (in.ready()) {
 					messages.add(serverName + "," + in.readLine());
 				}
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
+
 			synchronized (this) {
 				iterator = clients.iterator();
-				while(iterator.hasNext()) {
+				while (iterator.hasNext()) {
 					Client client = iterator.next();
-					
+
 					String message = client.getMessage();
-					if(message != null) {
+					if (message != null) {
 						messages.add(message);
 					}
 				}
-				
-				while(!messages.isEmpty()) {
+
+				while (!messages.isEmpty()) {
 					String message = messages.poll();
 					System.out.println(message);
-					
+
 					iterator = clients.iterator();
-					while(iterator.hasNext()) {
+					while (iterator.hasNext()) {
 						iterator.next().addMessage(message);
 					}
 				}
 			}
-			
 		}
 	}
-	
+
+	/**
+	 * Add a client to the server client queue.
+	 */
 	protected void addClient(Client client) {
 		clients.add(client);
 		client.start();
+		messages.add(serverName + "," + client.getUsername() + welcomeMessage);
 	}
 }
