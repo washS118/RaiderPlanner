@@ -20,6 +20,7 @@
  */
 
 package edu.wright.cs.raiderplanner.controller;
+import edu.wright.cs.raiderplanner.controller.MenuController;
 
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
@@ -40,8 +41,6 @@ import java.net.Socket;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
-
-import edu.wright.cs.raiderplanner.controller.MenuController;
 
 /**
  * This is a class to handle the code for the chat feature.

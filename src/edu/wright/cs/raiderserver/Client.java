@@ -92,7 +92,11 @@ public class Client extends Thread {
 	protected void addMessage(String message) {
 		outMessages.add(message);
 	}
-	
+
+	/**
+	 * Get the username of the client
+	 * @return string
+	 */
 	public String getUsername() {
 		return username;
 	}

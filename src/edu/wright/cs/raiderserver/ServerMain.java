@@ -60,11 +60,7 @@ public class ServerMain {
 			while (true) {
 				try {
 					//Connect
-					Socket conn = ss.accept();		
-
-					//Create writer
-					OutputStream out = conn.getOutputStream();
-					PrintWriter prtWriter = new PrintWriter(out, true);
+					Socket conn = ss.accept();
 
 					//Create reader
 					InputStream is = conn.getInputStream();
@@ -73,18 +69,22 @@ public class ServerMain {
 
 					// Block, waiting for client to send over hostname
 					String in = bufferedReader.readLine();
-					String names[] = in.split(",");
+					String[] names = in.split(",");
 					String hostname = names[0];
 					String username = names[1];
-					
+
 					System.out.println("Connected With: " + username);
 					System.out.println("Host: " + hostname);
-					
+
 					// Determine if we need to create new handler for this room
 					if (!handlerMap.containsKey(hostname)) {
 						handlerMap.put(hostname, new ServerHandler());
 						handlerMap.get(hostname).start();
 					}
+
+					//Create writer
+					OutputStream out = conn.getOutputStream();
+					PrintWriter prtWriter = new PrintWriter(out, true);
 
 					//Spin up client
 					Client client = new Client(username, prtWriter, bufferedReader);
