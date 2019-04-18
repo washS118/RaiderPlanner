@@ -20,8 +20,8 @@
  */
 
 package edu.wright.cs.raiderplanner.controller;
-import edu.wright.cs.raiderplanner.controller.MenuController;
 
+import edu.wright.cs.raiderplanner.controller.MenuController;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;

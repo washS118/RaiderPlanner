@@ -27,8 +27,6 @@ import java.io.PrintWriter;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import biweekly.property.Name;
-
 /**
  * This class defines the implementation of a chat client thread.
  *
@@ -94,7 +92,7 @@ public class Client extends Thread {
 	}
 
 	/**
-	 * Get the username of the client
+	 * Get the username of the client.
 	 * @return string
 	 */
 	public String getUsername() {
